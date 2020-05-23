@@ -11,11 +11,20 @@ Player::Player(sf::RenderWindow &window)
     setOrigin(5, 5);
 }
 
-void Player::gravity()
+void Player::animate()
 {
     const float PI = 3.14159265;
     double angle = atan2(screen_bounds.x - getPosition().x, screen_bounds.y - getPosition().y) * 180 / PI;
     double angle2 = atan2(getPosition().x - screen_bounds.x, getPosition().y - screen_bounds.y) * 180 / PI;
     setRotation(angle2);
-    move(0, speed_.y*getTime());
+    //move(0, speed_.y*getTime());
+}
+
+void Player::move1()
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+        double x = std::sin(90) * speed_;
+        double y = std::cos(90) * speed_;
+        setPosition(x, y);
+    }
 }

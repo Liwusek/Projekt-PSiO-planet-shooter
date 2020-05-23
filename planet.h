@@ -8,10 +8,11 @@ class Planet : public sf::CircleShape, Functions
 {
 public:
     Planet();
-    Planet(int radius, sf::RenderWindow &window);
+    Planet(int radius, int spin, sf::RenderWindow &window);
+    void animate();
 private:
     int radius_;
-    sf::Vector3f color_;
+    int spin_;
 };
 
 #endif // PLANET_H
