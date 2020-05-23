@@ -58,3 +58,7 @@
 >pierwsza wersja będzie mieć dwie planety - Mars i księżyc. Będą one mocno różnić się przyciąganiem oraz rozmieszczeniem platform.
 
 >planeta kręci się podczas gry; gracze stając na planecie dostają "premię" do prędkości w kierunku, w którym kręci się planeta oraz "karę" do ruchu w drugą stronę
+
+![Map](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter1.png)
+![One player](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter3.png)
+![Full game](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter2.png)
