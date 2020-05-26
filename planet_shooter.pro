@@ -5,6 +5,7 @@ CONFIG -= qt
 INCLUDEPATH += "D:/SFML-2.5.1/include"
 
 SOURCES += \
+	animation.cpp \
 	functions.cpp \
 	main.cpp \
 	planet.cpp \
@@ -18,6 +19,7 @@ CONFIG(debug, debug|release){
 }
 
 HEADERS += \
+	animation.h \
 	functions.h \
 	planet.h \
 	player.h
