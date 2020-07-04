@@ -1,13 +1,13 @@
 # Strzelanka multiplayerowa 2d typu splite screen dla 4 graczy SFML - "Planet Shooter"
 
 ## 1.Ogólne założenia:
->mapą jest rotująca planeta
+>gra to dwuosobowa strzelanka która odbywa się na tzw, "planecie" - środowisku, które jest zapętloną mapą
 
 >do około planety są rozmieszczone różne platformy, by urozmaicić środowisko gry
 
 >aby zdynamizować rozgrywkę gracze mają do dyspozycji jetpacki
 
->różne planety, a co za tym idzie inne rozłożenie platform oraz inna grawitacja
+>różne planety, a co za tym idzie inne rozłożenie platform oraz inna grawitacja (na razie dwie - jedna predefiniowana (Mars), druga losowo generowana).
 
 >gracz ma do użytku interface tj. ilość życia, posiadane umiejętności, minimalistyczna tabela wyników
 
@@ -30,18 +30,17 @@
 
 >rozgrywka kończy się po osiągnięciu danej liczby zabić
 #### Sterowanie:
->gracze do sterowania postaciami korzystają z kontrolerów xbox-owych, które są wspierane prze SFML-a – pozwoli to na równoczesną rozgrywkę 4 graczy
 
->lewym analogiem będzie realizowany ruch gracza po okręgu wokół planety - wychylenie gałki w lewą stronę powoduje jego orbitowanie w prawo, w lewą lewo
+>postać gracza 1. jest sterowana za pomocą myszki i klawiatury, gracz 2. ma do dyspozycji controller xbox-owy
 
->sterowanie strzelaniem odbywa się przez wychylanie drugiej gałki - za jej pomocą gracz nadaje kierunek pociskom
+>sterowanie strzelaniem odbywa się przez wychylanie gałki - za jej pomocą gracz nadaje kierunek pociskom lub myszki - pociski kierują sie w stronę kursora
 
 >pojedynczy klawisz - użycie jetpaka
 
 #### Poruszanie się:
->nie ma skoku - zamiast tego gracze mają do dyspozycji jetpaki za pomocą których mogą odrywać się od powierzchni planety - ich użycie (aktywacja za pomocą pojedynczego  zwiększa promień okręgu po którym realizowany jest aktualny ruch
-
+>nie ma skoku - zamiast tego gracze mają do dyspozycji jetpaki za pomocą których mogą odrywać się od powierzchni planety.
 #### Platformy:
+
 >platformy są nieruchome
 
 >gracze mogą stawać na platformach
@@ -55,9 +54,8 @@
 >przedmioty są losowo rozmieszczone po mapie
 
 #### Mapa:
->pierwsza wersja będzie mieć dwie planety - Mars i księżyc. Będą one mocno różnić się przyciąganiem oraz rozmieszczeniem platform.
+>pierwsza wersja będzie mieć dwie opcje map - predefiniowany Mars oraz mapę generowaną losowo. Nie tylko platformy się zmieniają, ale też siła grwitacji
 
->planeta kręci się podczas gry; gracze stając na planecie dostają "premię" do prędkości w kierunku, w którym kręci się planeta oraz "karę" do ruchu w drugą stronę
 
 ## 4. Klasy i ich zawartość:
 #### Animation:
