@@ -12,17 +12,16 @@
 using namespace std;
 
 
-
 int main()
 {
     //////////////////////OKNO//////////////////////
-    sf::Vector2f window_size = {800, 600};
+    sf::Vector2f window_size = {1600, 900};
     sf::RenderWindow window(sf::VideoMode(window_size.x, window_size.y), "Planet shooter"); //okno gry
 
     //////////////////////GRACZE//////////////////////
     std::vector<std::unique_ptr<Player>> players; //tworzenie graczy
-    players.emplace_back(std::make_unique<Player>(window, "player.png")); //gracz1
-    players.emplace_back(std::make_unique<Player>(window, "player.png")); //gracz2
+    players.emplace_back(std::make_unique<Player>(window, "player.png", input::keybord_mouse)); //gracz1
+    players.emplace_back(std::make_unique<Player>(window, "player.png", input::gamepad)); //gracz2
 
     //////////////////////KAMERA//////////////////////
     float proportion = 0.8f;
@@ -72,11 +71,13 @@ int main()
         for (size_t i = 0; i < players.size(); ++i){
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
-            window.draw(*players[i]);
+            for (auto const &player:players)window.draw(*player);
             bool on_platform = players[i]->gravity(1, platforms);
             players[i]->animation(on_platform);
             players[i]->control(on_platform);
             players[i]->collision(platforms);
+            players[i]->movement();
+            players[i]->teleport();
 
             for (auto &platform:platforms) {
                 window.draw(*platform);

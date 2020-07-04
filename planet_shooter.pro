@@ -5,6 +5,7 @@ CONFIG -= qt
 INCLUDEPATH += "D:/SFML-2.5.1/include"
 
 SOURCES += \
+	bullet.cpp \
 	button.cpp \
 	functions.cpp \
 	main.cpp \
@@ -21,6 +22,7 @@ CONFIG(debug, debug|release){
 }
 
 HEADERS += \
+	bullet.h \
 	button.h \
 	functions.h \
 	menu.h \

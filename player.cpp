@@ -2,9 +2,10 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <iostream>
 
-Player::Player(sf::RenderWindow &window, std::string texture_name):sf::Sprite(),
-    image_count({8, 5}), window_size(window.getSize())
+Player::Player(sf::RenderWindow &window, std::string texture_name, input input, unsigned int joy):sf::Sprite(),
+    image_count({8, 5}), input_(input), joy_nr(joy), window_size(window.getSize())
 {
     texture.loadFromFile(texture_name);
     texture.setSmooth(true);
@@ -21,19 +22,26 @@ Player::Player(sf::RenderWindow &window, std::string texture_name):sf::Sprite(),
 
 void Player::control(bool on_platform)
 {
-    //if(input == input::gamepad)
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-        if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
+    if(input_ == input::keybord_mouse){
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))velocity.x = move_speed_;
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))velocity.x = -move_speed_;
+        else velocity.x = 0;
     }
+    else if(input_ == input::gamepad){
+        std::cout<<sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X)<<std::endl;
+        if(sf::Joystick::isButtonPressed(joy_nr, 3))
+            if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && (getGlobalBounds().left+getGlobalBounds().width<window_size.x))velocity.x = move_speed_;
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && (getGlobalBounds().left>0))velocity.x = -move_speed_;
-    else velocity.x = 0;
+        if(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == 100)velocity.x = move_speed_;
+        else if(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == -100)velocity.x = -move_speed_;
+        else velocity.x = 0;
 
-    sf::Time time = clock.restart();
-    move(velocity*time.asSeconds());
-
+    }
 }
+
 bool Player::gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &vector)
 {
     int tolerance = 0;
@@ -58,7 +66,6 @@ void Player::collision(const std::vector<std::unique_ptr<sf::Drawable>> &vector)
     for(size_t i=0; i<vector.size(); i++){
         Platform *platform = dynamic_cast<Platform *>(vector[i].get());
         if (platform != nullptr){
-            //if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(tolerance, 0)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x - tolerance, 0))){ //góra sprita
             if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2, 0))){ //góra sprita
                 velocity.y = 0;
                 move(0, far);
@@ -119,6 +126,20 @@ void Player::image_select(float x, float y, bool is_right)
         rect.width = -abs(rect.width);
         sprite_size = sf::Vector2f(abs(rect.width), abs(rect.height));
     }
+}
+
+void Player::teleport()
+{
+    if(getPosition().x>window_size.x)setPosition(0, getPosition().y);
+    else if(getPosition().x<0)setPosition(window_size.x, getPosition().y);
+    else if(getPosition().y>window_size.y)setPosition(getPosition().x, 0);
+    else if(getPosition().y<0)setPosition(getPosition().x, window_size.y);
+}
+
+void Player::movement()
+{
+    sf::Time time = clock.restart();
+    move(velocity*time.asSeconds());
 }
 
 
