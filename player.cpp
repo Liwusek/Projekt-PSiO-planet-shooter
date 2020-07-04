@@ -21,6 +21,7 @@ Player::Player(sf::RenderWindow &window, std::string texture_name):sf::Sprite(),
 
 void Player::control(bool on_platform)
 {
+    //if(input == input::gamepad)
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
         if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
     }

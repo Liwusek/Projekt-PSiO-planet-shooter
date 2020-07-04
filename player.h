@@ -3,6 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "platform.h"
+enum class input{
+    keybord_mouse,
+    gamepad
+};
 
 class Player : public sf::Sprite
 {
@@ -22,7 +26,7 @@ private:
     sf::Clock clock;
 
     float move_speed_ = 200;
-    float jump_speed_ = 200;
+    float jump_speed_ = 500;
     sf::Vector2f velocity = {0, 0};
     sf::Vector2f window_size;
 };
