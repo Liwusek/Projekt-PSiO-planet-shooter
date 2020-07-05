@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include "platform.h"
+#include "bullet.h"
+#include <list>
+
 enum class input{
     keybord_mouse,
     gamepad
@@ -20,7 +23,11 @@ public:
     void image_select(float x, float y, bool is_right = true);
     void teleport();
     void movement();
+    void shooting();
+    sf::Vector2f shooting_dir();
+    void bullets_delete();
 
+    std::list<std::unique_ptr<Bullet>> bullets;
 private:
     sf::Vector2f sprite_size;
     sf::Vector2f image_count;
@@ -28,6 +35,7 @@ private:
     sf::Clock clock;
     input input_;
     unsigned int joy_nr;
+    Bullet bullet_;
 
     float move_speed_ = 200;
     float jump_speed_ = 200;

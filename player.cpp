@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 Player::Player(sf::RenderWindow &window, std::string texture_name, input input, unsigned int joy):sf::Sprite(),
     image_count({8, 5}), input_(input), joy_nr(joy), window_size(window.getSize())
@@ -31,7 +32,7 @@ void Player::control(bool on_platform)
         else velocity.x = 0;
     }
     else if(input_ == input::gamepad){
-        std::cout<<sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X)<<std::endl;
+        std::cout<<sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V)<<std::endl;
         if(sf::Joystick::isButtonPressed(joy_nr, 3))
             if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
 
@@ -140,6 +141,33 @@ void Player::movement()
 {
     sf::Time time = clock.restart();
     move(velocity*time.asSeconds());
+}
+
+sf::Vector2f Player::shooting_dir()
+{
+    sf::Vector2f dir = {sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::U), sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V)};
+    sf::Vector2f dir_norm;
+    dir_norm.x = dir.x / sqrt(pow(dir.x, 2) + pow(dir.y, 2));
+    dir_norm.y = dir.y / sqrt(pow(dir.x, 2) + pow(dir.y, 2));
+    sf::Vector2f dir_end;
+    dir_end.x = dir_norm.x*bullet_.getSpeed();
+    dir_end.y = dir_norm.y*bullet_.getSpeed();
+    return dir_end;
+}
+
+void Player::shooting()
+{
+    if(input_ == input::gamepad){
+        std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
+        if(sf::Joystick::isButtonPressed(joy_nr, 1)){
+            bullet->setPosition(getPosition());
+            bullet->setDir(shooting_dir());
+            bullets.emplace_back(std::move(bullet));
+
+        }
+
+    }
+
 }
 
 

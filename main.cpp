@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iostream>
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -26,11 +25,11 @@ int main()
     //////////////////////KAMERA//////////////////////
     float proportion = 0.8f;
     std::vector<std::unique_ptr<sf::View>> views; //split screen
-    std::unique_ptr view1 = std::make_unique<sf::View>(); //gracz1
+    std::unique_ptr<sf::View> view1 = std::make_unique<sf::View>(); //gracz1
     view1->setViewport(sf::FloatRect(0, 0, 0.5f, proportion));
     view1->setSize(sf::Vector2f(window_size.x/2, window_size.y*proportion));
     views.emplace_back(move(view1));
-    std::unique_ptr view2 = std::make_unique<sf::View>(); //gracz2
+    std::unique_ptr<sf::View>  view2 = std::make_unique<sf::View>(); //gracz2
     view2->setViewport(sf::FloatRect(0.5, 0, 0.5f, proportion));
     view2->setSize(sf::Vector2f(window_size.x/2, window_size.y*proportion));
     views.emplace_back(move(view2));
@@ -43,7 +42,7 @@ int main()
     bar.setPosition(interface_pos);
     bar.setOrigin(window_size.x/2, bar_offset/2);
     bar.setFillColor(sf::Color::Green);
-    std::unique_ptr view_inter = std::make_unique<sf::View>(); //interface
+    std::unique_ptr<sf::View>  view_inter = std::make_unique<sf::View>(); //interface
     view_inter->setViewport(sf::FloatRect(0, proportion, 1.0f, 1.0f - proportion));
     view_inter->setSize(sf::Vector2f(window_size.x, window_size.y*0.1));
     view_inter->setCenter(bar.getPosition());
@@ -52,7 +51,7 @@ int main()
      //////////////////////PLATFORMY//////////////////////
     std::vector<std::unique_ptr<sf::Drawable>> platforms;
     int ground_overlap = 200;
-    std::unique_ptr base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(500, 500), "mars.jpg");
+    std::unique_ptr<Platform> base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(500, 500), "mars.jpg");
     base->repeate(40);
     platforms.emplace_back(move(base));
     sf::Clock clk;
@@ -67,17 +66,24 @@ int main()
         }
 
         window.clear(sf::Color::Black);
-
+        sf::Time time = clk.restart();
         for (size_t i = 0; i < players.size(); ++i){
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
             for (auto const &player:players)window.draw(*player);
-            bool on_platform = players[i]->gravity(1, platforms);
+            bool on_platform = players[i]->gravity(4, platforms);
             players[i]->animation(on_platform);
             players[i]->control(on_platform);
             players[i]->collision(platforms);
             players[i]->movement();
             players[i]->teleport();
+            players[i]->shooting();
+            for (auto const &player:players){
+                for (auto const &bullet:player->bullets){
+                    bullet->move(bullet->getDir()*time.asSeconds());
+                    window.draw(*bullet);
+                }
+            }
 
             for (auto &platform:platforms) {
                 window.draw(*platform);
