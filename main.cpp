@@ -56,18 +56,9 @@ int main()
     base->repeate(40);
     things.emplace_back(move(base));
 
-     Platform::platform_maker(5, sf::Vector2f(50, 10), 10, window_size,
+     Platform::platform_maker(sf::Vector2f(1, 10), sf::Vector2f(200, 30), 90, window_size,
      sf::Vector2f(100, 100), "mars.jpg", things);
 
-//    sf::Vector2f size = {100, 50};
-//    sf::Vector2f screen;
-//    int space = 30;
-//    screen.y = window_size.y - space;
-//    screen.x = window_size.x + 1 - size.x;
-//    for (int i = 0; i < 10; ++i){
-//        things.emplace_back(std::make_unique<Platform>(rand() % int(screen.x), screen.y, size, sf::Vector2f(500, 500), "mars.jpg"));
-//        screen.y -= space;
-//    }
 
 
     sf::Clock clk;
@@ -94,6 +85,7 @@ int main()
             players[i]->movement();
             players[i]->teleport();
             players[i]->shooting();
+            players[i]->jetpack(on_platform);
             for (auto const &player:players){
                 //player->bullets_delete(platforms);
                 for (auto const &bullet:player->bullets){

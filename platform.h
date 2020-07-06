@@ -9,7 +9,7 @@ public:
     Platform();
     Platform(int x, int y, sf::Vector2f size, sf::Vector2f texture_size, std::string texture_name);
     void repeate(int x, int y = 1);
-    static void platform_maker(int quantity, sf::Vector2f size, float space, sf::Vector2f screen,
+    static void platform_maker(sf::Vector2f quantity, sf::Vector2f size, float space, sf::Vector2f screen,
     sf::Vector2f texture_size, std::string texture_name, std::vector<std::unique_ptr<sf::Drawable>> &vector);
 private:
     sf::Texture texture_;

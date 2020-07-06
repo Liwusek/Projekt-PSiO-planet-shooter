@@ -43,6 +43,14 @@ void Player::control(bool on_platform)
     }
 }
 
+void Player::jetpack(bool on_platform)
+{
+    if(input_ == input::gamepad){
+        if(sf::Joystick::isButtonPressed(joy_nr, 0) && (on_platform == false))
+            velocity.y = -jump_speed_;
+    }
+}
+
 bool Player::gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &vector)
 {
     int tolerance = 0;
@@ -133,8 +141,8 @@ void Player::teleport()
 {
     if(getPosition().x>window_size.x)setPosition(0, getPosition().y);
     else if(getPosition().x<0)setPosition(window_size.x, getPosition().y);
-    else if(getPosition().y>window_size.y)setPosition(getPosition().x, 0);
-    else if(getPosition().y<0)setPosition(getPosition().x, window_size.y);
+//    else if(getPosition().y>window_size.y)setPosition(getPosition().x, 0);
+//    else if(getPosition().y<0)setPosition(getPosition().x, window_size.y);
 }
 
 void Player::movement()

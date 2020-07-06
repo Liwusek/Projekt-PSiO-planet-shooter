@@ -16,6 +16,7 @@ class Player : public sf::Sprite
 public:
     Player(sf::RenderWindow &window, std::string texture_name, input, unsigned int joy=0);
     void control(bool on_platform);
+    void jetpack(bool on_platform);
     bool gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
     void collision(const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
     sf::Texture texture;
