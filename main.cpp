@@ -11,6 +11,7 @@
 using namespace std;
 
 
+
 int main()
 {
     //////////////////////OKNO//////////////////////
@@ -19,7 +20,7 @@ int main()
 
     //////////////////////GRACZE//////////////////////
     std::vector<std::unique_ptr<Player>> players; //tworzenie graczy
-    players.emplace_back(std::make_unique<Player>(window, "player.png", input::keybord_mouse)); //gracz1
+    players.emplace_back(std::make_unique<Player>(window, "player.png", input::gamepad, 1)); //gracz1
     players.emplace_back(std::make_unique<Player>(window, "player.png", input::gamepad)); //gracz2
 
     //////////////////////KAMERA//////////////////////
@@ -49,11 +50,26 @@ int main()
     views.emplace_back(move(view_inter));
 
      //////////////////////PLATFORMY//////////////////////
-    std::vector<std::unique_ptr<sf::Drawable>> platforms;
+    std::vector<std::unique_ptr<sf::Drawable>> things;
     int ground_overlap = 200;
     std::unique_ptr<Platform> base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(500, 500), "mars.jpg");
     base->repeate(40);
-    platforms.emplace_back(move(base));
+    things.emplace_back(move(base));
+
+     Platform::platform_maker(5, sf::Vector2f(50, 10), 10, window_size,
+     sf::Vector2f(100, 100), "mars.jpg", things);
+
+//    sf::Vector2f size = {100, 50};
+//    sf::Vector2f screen;
+//    int space = 30;
+//    screen.y = window_size.y - space;
+//    screen.x = window_size.x + 1 - size.x;
+//    for (int i = 0; i < 10; ++i){
+//        things.emplace_back(std::make_unique<Platform>(rand() % int(screen.x), screen.y, size, sf::Vector2f(500, 500), "mars.jpg"));
+//        screen.y -= space;
+//    }
+
+
     sf::Clock clk;
 
     while(window.isOpen()){
@@ -71,21 +87,22 @@ int main()
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
             for (auto const &player:players)window.draw(*player);
-            bool on_platform = players[i]->gravity(4, platforms);
+            bool on_platform = players[i]->gravity(4, things);
             players[i]->animation(on_platform);
             players[i]->control(on_platform);
-            players[i]->collision(platforms);
+            players[i]->collision(things);
             players[i]->movement();
             players[i]->teleport();
             players[i]->shooting();
             for (auto const &player:players){
+                //player->bullets_delete(platforms);
                 for (auto const &bullet:player->bullets){
                     bullet->move(bullet->getDir()*time.asSeconds());
                     window.draw(*bullet);
                 }
             }
 
-            for (auto &platform:platforms) {
+            for (auto &platform:things) {
                 window.draw(*platform);
             }
 

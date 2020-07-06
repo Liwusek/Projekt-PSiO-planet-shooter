@@ -25,7 +25,7 @@ public:
     void movement();
     void shooting();
     sf::Vector2f shooting_dir();
-    void bullets_delete();
+    bool bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector);
 
     std::list<std::unique_ptr<Bullet>> bullets;
 private:

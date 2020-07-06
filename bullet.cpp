@@ -5,6 +5,11 @@ Bullet::Bullet() : sf::CircleShape()
     setRadius(size_);
 }
 
+Bullet::~Bullet()
+{
+
+}
+
 int Bullet::getSpeed()
 {
     return speed_;

@@ -7,10 +7,12 @@ class Bullet : public sf::CircleShape
 {
 public:
     Bullet();
+    ~Bullet();
     int getSpeed();
     void setDir(sf::Vector2f dir);
     sf::Vector2f getDir();
     bool dead = false;
+
 private:
     int size_ = 5;
     int speed_ = 300;

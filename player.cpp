@@ -19,6 +19,7 @@ Player::Player(sf::RenderWindow &window, std::string texture_name, input input, 
     setTextureRect(rect);
 
     sprite_size = sf::Vector2f(rect.width, rect.height);
+    setOrigin(sprite_size.x/2, sprite_size.y/2);
 }
 
 void Player::control(bool on_platform)
@@ -32,12 +33,11 @@ void Player::control(bool on_platform)
         else velocity.x = 0;
     }
     else if(input_ == input::gamepad){
-        std::cout<<sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V)<<std::endl;
-        if(sf::Joystick::isButtonPressed(joy_nr, 3))
+        if(sf::Joystick::isButtonPressed(joy_nr, 0))
             if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
 
-        if(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == 100)velocity.x = move_speed_;
-        else if(sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == -100)velocity.x = -move_speed_;
+        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) == 100)velocity.x = move_speed_;
+        else if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) == -100)velocity.x = -move_speed_;
         else velocity.x = 0;
 
     }
@@ -49,7 +49,7 @@ bool Player::gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &
     for(size_t i=0; i<vector.size(); i++){
         Platform *platform = dynamic_cast<Platform *>(vector[i].get());
         if (platform != nullptr){
-            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(tolerance, sprite_size.y)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x - tolerance, sprite_size.y))){
+            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(-sprite_size.x/2 + tolerance, -sprite_size.y/2)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2 - tolerance, sprite_size.y/2))){
                 velocity.y = 0;
                 return true;
             }
@@ -67,14 +67,14 @@ void Player::collision(const std::vector<std::unique_ptr<sf::Drawable>> &vector)
     for(size_t i=0; i<vector.size(); i++){
         Platform *platform = dynamic_cast<Platform *>(vector[i].get());
         if (platform != nullptr){
-            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2, 0))){ //góra sprita
+            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(0, -sprite_size.y/2))){ //góra sprita
                 velocity.y = 0;
                 move(0, far);
             }
-            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(0, tolerance_top)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(0, sprite_size.y/2)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(0, sprite_size.y - tolerance_bottom))){ //lewa sprita
+            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(-sprite_size.x/2, -sprite_size.y/2 + tolerance_top)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(-sprite_size.x/2, 0)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(-sprite_size.x/2, sprite_size.y - tolerance_bottom))){ //lewa sprita
                 move(far, 0);
             }
-            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x, tolerance_top)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x, sprite_size.y/2)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x, sprite_size.y - tolerance_bottom))){ //prawa sprita
+            if(platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2, -sprite_size.y/2 + tolerance_top)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2, 0)) || platform->getGlobalBounds().contains(getPosition() + sf::Vector2f(sprite_size.x/2, sprite_size.y - tolerance_bottom))){ //prawa sprita
                 move(-far, 0);
             }
 
@@ -145,7 +145,7 @@ void Player::movement()
 
 sf::Vector2f Player::shooting_dir()
 {
-    sf::Vector2f dir = {sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::U), sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::V)};
+    sf::Vector2f dir = {sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::U), sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::V)};
     sf::Vector2f dir_norm;
     dir_norm.x = dir.x / sqrt(pow(dir.x, 2) + pow(dir.y, 2));
     dir_norm.y = dir.y / sqrt(pow(dir.x, 2) + pow(dir.y, 2));
@@ -155,11 +155,39 @@ sf::Vector2f Player::shooting_dir()
     return dir_end;
 }
 
+bool Player::bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector)
+{
+    for(auto &bullet : bullets){
+        for (auto it = bullets.begin(); it != bullets.end(); it++){
+            for(size_t i=0; i<vector.size(); i++){
+                Platform *platform = dynamic_cast<Platform *>(vector[i].get());
+                if (platform != nullptr){
+                    if(platform->getGlobalBounds().contains(bullet->getPosition())){
+                        bullets.erase(it);
+                        return true;
+                    }
+                }
+            }
+
+            if((bullet->getPosition().x>window_size.x)
+                    ||(bullet->getPosition().x<0)
+                    ||(bullet->getPosition().y>window_size.y)
+                    ||(bullet->getPosition().y<0)){
+                bullets.erase(it);
+                return true;
+            }
+
+
+        }
+    }
+    return false;
+}
+
 void Player::shooting()
 {
     if(input_ == input::gamepad){
         std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
-        if(sf::Joystick::isButtonPressed(joy_nr, 1)){
+        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::Z)<-50){
             bullet->setPosition(getPosition());
             bullet->setDir(shooting_dir());
             bullets.emplace_back(std::move(bullet));
