@@ -34,10 +34,12 @@ private:
     sf::Vector2f image_count;
     sf::IntRect rect;
     sf::Clock clock;
+    sf::Clock clock2;
     input input_;
     unsigned int joy_nr;
     Bullet bullet_;
 
+    float fire_rate = 10;
     float move_speed_ = 200;
     float jump_speed_ = 200;
     sf::Vector2f velocity = {0, 0};

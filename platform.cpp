@@ -20,33 +20,34 @@ void Platform::repeate(int x, int y)
 }
 
 
-void Platform::platform_maker(sf::Vector2f quantity, sf::Vector2f size, float space, sf::Vector2f screen,
-sf::Vector2f texture_size, std::string texture_name, std::vector<std::unique_ptr<sf::Drawable>> &vector)
+void Platform::platform_maker(sf::Vector2f quantity, sf::Vector2f size, sf::Vector2f screen,
+sf::Vector2f texture_size, std::string texture_name, sf::Vector2f texture_multi, std::vector<std::unique_ptr<sf::Drawable>> &vector)
 {
-    space = screen.y / quantity.y;
+    float space = screen.y / quantity.y;
     screen.y = screen.y - space;
     screen.x = screen.x - size.x;
     for (int i = 0; i < quantity.y; ++i){
         for (int i = 0; i < quantity.x; ++i){
-            bool are_colliding = false;
+            bool are_colliding;
             std::unique_ptr<Platform> new_platform;
             do{
+                are_colliding = false;
                 new_platform = std::make_unique<Platform>(rand() % int(screen.x), screen.y, size, texture_size, texture_name);
+                new_platform->repeate(texture_multi.x, texture_multi.y);
                 for(size_t i=0; i<vector.size(); i++){
                     Platform *platform = dynamic_cast<Platform *>(vector[i].get());
                     if (platform != nullptr){
                         if(platform->getGlobalBounds().intersects(new_platform->getGlobalBounds())){
                             are_colliding = true;
-                            std::cout<<"dupa"<<std::endl;
+                            std::cout<<"Wrong position, relocating"<<std::endl;
                         }
                     }
                 }
 
             }while(are_colliding);
-            std::cout<<"DUPA"<<std::endl;
+            std::cout<<"Succes"<<std::endl;
             vector.emplace_back(std::move(new_platform));
         }
             screen.y -= space;
-            if(screen.y <= size.y) break;
     }
 }

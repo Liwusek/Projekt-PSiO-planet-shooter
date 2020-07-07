@@ -195,10 +195,13 @@ void Player::shooting()
 {
     if(input_ == input::gamepad){
         std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
-        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::Z)<-50){
+        float time = clock2.getElapsedTime().asSeconds();
+        std::cout<<time<<std::endl;
+        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::Z)<-50 && time > 1/fire_rate){
             bullet->setPosition(getPosition());
             bullet->setDir(shooting_dir());
             bullets.emplace_back(std::move(bullet));
+            clock2.restart();
 
         }
 

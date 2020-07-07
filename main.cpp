@@ -4,9 +4,9 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "planet.h"
 #include "player.h"
 #include  "platform.h"
+#include "background.h"
 
 using namespace std;
 
@@ -14,6 +14,9 @@ using namespace std;
 
 int main()
 {
+    string platform_texture = "moon.png";
+
+
     //////////////////////OKNO//////////////////////
     sf::Vector2f window_size = {1600, 900};
     sf::RenderWindow window(sf::VideoMode(window_size.x, window_size.y), "Planet shooter"); //okno gry
@@ -39,25 +42,32 @@ int main()
     //////////////////////INTERFACE//////////////////////
     sf::Vector2f interface_pos = {0, -1000};
     int bar_offset = window_size.y*(1.0f - proportion);
-    sf::RectangleShape bar(sf::Vector2f(window_size.x, bar_offset));
+    Background bar(sf::Vector2f(window_size.x, bar_offset), sf::Vector2f(100, 100), "background.png");
     bar.setPosition(interface_pos);
     bar.setOrigin(window_size.x/2, bar_offset/2);
-    bar.setFillColor(sf::Color::Green);
+    //bar.setFillColor(sf::Color::Green);
     std::unique_ptr<sf::View>  view_inter = std::make_unique<sf::View>(); //interface
     view_inter->setViewport(sf::FloatRect(0, proportion, 1.0f, 1.0f - proportion));
     view_inter->setSize(sf::Vector2f(window_size.x, window_size.y*0.1));
     view_inter->setCenter(bar.getPosition());
     views.emplace_back(move(view_inter));
 
+    //////////////////////TLO//////////////////////
+    Background background(sf::Vector2f(window_size.x, window_size.x), sf::Vector2f(700, 700), "background.png");
+    //background.setPosition(0, 0);
+    //background.repeate(1, 1);
+
      //////////////////////PLATFORMY//////////////////////
     std::vector<std::unique_ptr<sf::Drawable>> things;
     int ground_overlap = 200;
-    std::unique_ptr<Platform> base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(500, 500), "mars.jpg");
-    base->repeate(40);
+    std::unique_ptr<Platform> base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(100, 100), platform_texture);
+    base->repeate(30, 3);
     things.emplace_back(move(base));
 
-     Platform::platform_maker(sf::Vector2f(1, 10), sf::Vector2f(200, 30), 90, window_size,
-     sf::Vector2f(100, 100), "mars.jpg", things);
+     Platform::platform_maker(sf::Vector2f(3, 5), sf::Vector2f(200, 30), window_size,
+     sf::Vector2f(100, 100), platform_texture, sf::Vector2f(3, 1), things);
+
+
 
 
 
@@ -73,6 +83,7 @@ int main()
         }
 
         window.clear(sf::Color::Black);
+        window.draw(background);
         sf::Time time = clk.restart();
         for (size_t i = 0; i < players.size(); ++i){
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
@@ -94,9 +105,11 @@ int main()
                 }
             }
 
-            for (auto &platform:things) {
-                window.draw(*platform);
+            for(size_t i=0; i<things.size(); i++){
+                    Platform *platform = dynamic_cast<Platform *>(things[i].get());
+                    if (platform != nullptr)window.draw(*platform);
             }
+
 
         }
         sf::View interface = *views[views.size()-1];
