@@ -4,7 +4,7 @@
 #include <SFML/Window.hpp>
 #include "platform.h"
 #include "bullet.h"
-#include <list>
+#include <vector>
 
 enum class input{
     keybord_mouse,
@@ -27,8 +27,9 @@ public:
     void shooting();
     sf::Vector2f shooting_dir();
     bool bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector);
-
-    std::list<std::unique_ptr<Bullet>> bullets;
+    std::vector<std::unique_ptr<Bullet>> bullets;
+    void hit(std::vector<std::unique_ptr<Player>> players);
+    int life = 100;
 private:
     sf::Vector2f sprite_size;
     sf::Vector2f image_count;

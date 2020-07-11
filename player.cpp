@@ -191,16 +191,29 @@ bool Player::bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &ve
     return false;
 }
 
+void Player::hit(std::vector<std::unique_ptr<Player>> players)
+{
+    for (auto const &player:players){
+        if(getPosition() == player->getPosition())continue;
+        for (auto const &bullet:player->bullets){
+            if(player->getGlobalBounds().contains(bullet->getPosition()))life -= 1;
+
+        }
+    }
+
+}
+
 void Player::shooting()
 {
     if(input_ == input::gamepad){
         std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
+//        Bullet *bullet = new Bullet();
         float time = clock2.getElapsedTime().asSeconds();
-        std::cout<<time<<std::endl;
         if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::Z)<-50 && time > 1/fire_rate){
             bullet->setPosition(getPosition());
             bullet->setDir(shooting_dir());
             bullets.emplace_back(std::move(bullet));
+//            bullets.emplace_back(bullet);
             clock2.restart();
 
         }

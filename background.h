@@ -8,7 +8,7 @@ class Background : public sf::RectangleShape
         public:
             Background();
             Background(sf::Vector2f size, sf::Vector2f texture_size, std::string texture_name);
-            void repeate(int x, int y = 1);
+            void repeate(float x, float y = 1.0);
         private:
             sf::Texture texture_;
             sf::Vector2f size_;

@@ -7,10 +7,8 @@ INCLUDEPATH += "D:/SFML-2.5.1/include"
 SOURCES += \
 	background.cpp \
 	bullet.cpp \
-	button.cpp \
 	functions.cpp \
 	main.cpp \
-	menu.cpp \
 	platform.cpp \
 	player.cpp
 
@@ -24,8 +22,6 @@ CONFIG(debug, debug|release){
 HEADERS += \
 	background.h \
 	bullet.h \
-	button.h \
 	functions.h \
-	menu.h \
 	platform.h \
 	player.h
