@@ -91,7 +91,8 @@ int main()
         for (size_t i = 0; i < players.size(); ++i){
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
-            for (auto const &player:players)window.draw(*player);
+            for (auto const &player:players)
+            window.draw(*player);
             bool on_platform = players[i]->gravity(4, things);
             players[i]->animation(on_platform);
             players[i]->control(on_platform);
@@ -100,19 +101,19 @@ int main()
             players[i]->teleport();
             players[i]->shooting();
             players[i]->jetpack(on_platform);
+            players[i]->bulets_remove();
 
             for (auto const &player:players){
-                int it = 0;
                 for (auto const &bullet:player->bullets){
                     bullet->move(bullet->getDir()*time.asSeconds());
-//                    window.draw(*bullet);
-//                    if(bullet->is_dead(window_size, things)) player->bullets.erase(player->bullets.begin()+it);
-//                    it += 1;
+                    window.draw(*bullet);
                     if(!bullet->dead)bullet->dead = bullet->is_dead(window_size, things);
-                    if(!bullet->dead)window.draw(*bullet);
-
                 }
             }
+
+            players[0]->hit(players[1]);
+            players[1]->hit(players[0]);
+
 
             for(size_t i=0; i<things.size(); i++){
                 Platform *platform = dynamic_cast<Platform *>(things[i].get());
@@ -121,6 +122,7 @@ int main()
 
 
         }
+
         sf::View interface = *views[views.size()-1];
         window.setView(interface);
         window.draw(bar);

@@ -191,14 +191,17 @@ bool Player::bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &ve
     return false;
 }
 
-void Player::hit(std::vector<std::unique_ptr<Player>> players)
+void Player::bulets_remove()
 {
-    for (auto const &player:players){
-        if(getPosition() == player->getPosition())continue;
-        for (auto const &bullet:player->bullets){
-            if(player->getGlobalBounds().contains(bullet->getPosition()))life -= 1;
+        bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](auto const& bullet){ return bullet->dead; }), bullets.end());
+}
 
-        }
+void Player::hit(const std::unique_ptr<Player> &player)
+{
+    for (auto const &bullet:player->bullets){
+        if(getGlobalBounds().contains(bullet->getPosition()))life -= 1;
+        std::cout<<life<<std::endl;
+
     }
 
 }

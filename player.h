@@ -27,8 +27,9 @@ public:
     void shooting();
     sf::Vector2f shooting_dir();
     bool bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector);
+    void bulets_remove();
     std::vector<std::unique_ptr<Bullet>> bullets;
-    void hit(std::vector<std::unique_ptr<Player>> players);
+    void hit(const std::unique_ptr<Player> &player);
     int life = 100;
 private:
     sf::Vector2f sprite_size;
