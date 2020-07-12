@@ -102,6 +102,7 @@ int main()
             players[i]->shooting();
             players[i]->jetpack(on_platform);
             players[i]->bulets_remove();
+            players[i]->respawn(10, things);
 
             for (auto const &player:players){
                 for (auto const &bullet:player->bullets){

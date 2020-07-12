@@ -206,6 +206,19 @@ void Player::hit(const std::unique_ptr<Player> &player)
 
 }
 
+void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> > &things)
+{
+    if(life<=0){
+        life = 100;
+        Platform *platform;
+        do{
+            int index = rand() % things.size();
+            platform = dynamic_cast<Platform *>(things[index].get());
+        }while (platform == nullptr);
+        setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y + platform->get_size().y + sprite_size.y + hight));
+    }
+}
+
 void Player::shooting()
 {
     if(input_ == input::gamepad){

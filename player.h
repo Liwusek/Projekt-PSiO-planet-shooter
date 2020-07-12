@@ -31,6 +31,7 @@ public:
     std::vector<std::unique_ptr<Bullet>> bullets;
     void hit(const std::unique_ptr<Player> &player);
     int life = 100;
+    void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
 private:
     sf::Vector2f sprite_size;
     sf::Vector2f image_count;

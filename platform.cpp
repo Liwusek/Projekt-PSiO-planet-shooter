@@ -51,3 +51,8 @@ sf::Vector2f texture_size, std::string texture_name, sf::Vector2f texture_multi,
             screen.y -= space;
     }
 }
+
+sf::Vector2f Platform::get_size()
+{
+    return size_;
+}
