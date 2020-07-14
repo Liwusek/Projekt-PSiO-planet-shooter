@@ -6,11 +6,13 @@ INCLUDEPATH += "D:/SFML-2.5.1/include"
 
 SOURCES += \
 	background.cpp \
+	bonus.cpp \
 	bullet.cpp \
 	functions.cpp \
 	main.cpp \
 	platform.cpp \
-	player.cpp
+	player.cpp \
+	text.cpp
 
 LIBS += -L"D:/SFML-2.5.1/lib"
 CONFIG(debug, debug|release){
@@ -21,7 +23,9 @@ CONFIG(debug, debug|release){
 
 HEADERS += \
 	background.h \
+	bonus.h \
 	bullet.h \
 	functions.h \
 	platform.h \
-	player.h
+	player.h \
+	text.h

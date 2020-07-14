@@ -14,7 +14,7 @@ Platform::Platform(int x, int y, sf::Vector2f size, sf::Vector2f texture_size, s
     setPosition(x, y);
 }
 
-void Platform::repeate(int x, int y)
+void Platform::repeate(float x, float y)
 {
     setTextureRect( sf::IntRect(0, 0, texture_size.x*x, texture_size.y*y));
 }

@@ -15,24 +15,26 @@ class Player : public sf::Sprite
 {
 public:
     Player(sf::RenderWindow &window, std::string texture_name, input, unsigned int joy=0);
+    sf::Texture texture;
     void control(bool on_platform);
     void jetpack(bool on_platform);
     bool gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
     void collision(const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
-    sf::Texture texture;
     void animation(bool on_platform);
-    void image_select(float x, float y, bool is_right = true);
     void teleport();
     void movement();
     void shooting();
-    sf::Vector2f shooting_dir();
     bool bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector);
     void bulets_remove();
     std::vector<std::unique_ptr<Bullet>> bullets;
     void hit(const std::unique_ptr<Player> &player);
-    int life = 100;
+    int get_life();
+    int get_score();
     void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
 private:
+    void image_select(float x, float y, bool is_right = true);
+    sf::Vector2f shooting_dir();
+    int life = 0;
     sf::Vector2f sprite_size;
     sf::Vector2f image_count;
     sf::IntRect rect;
@@ -41,7 +43,8 @@ private:
     input input_;
     unsigned int joy_nr;
     Bullet bullet_;
-
+    int score = -1;
+    int damage = 10;
     float fire_rate = 10;
     float move_speed_ = 200;
     float jump_speed_ = 200;

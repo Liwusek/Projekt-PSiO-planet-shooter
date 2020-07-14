@@ -4,6 +4,7 @@ Bullet::Bullet() : sf::CircleShape()
 {
     setRadius(size_);
     setOrigin(size_, size_);
+    setFillColor(sf::Color::Green);
 }
 
 Bullet::~Bullet()

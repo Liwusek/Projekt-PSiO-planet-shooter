@@ -46,7 +46,7 @@ void Player::control(bool on_platform)
 void Player::jetpack(bool on_platform)
 {
     if(input_ == input::gamepad){
-        if(sf::Joystick::isButtonPressed(joy_nr, 0) && (on_platform == false))
+        if(sf::Joystick::isButtonPressed(joy_nr, 4) && (on_platform == false))
             velocity.y = -jump_speed_;
     }
 }
@@ -199,11 +199,22 @@ void Player::bulets_remove()
 void Player::hit(const std::unique_ptr<Player> &player)
 {
     for (auto const &bullet:player->bullets){
-        if(getGlobalBounds().contains(bullet->getPosition()))life -= 1;
-        std::cout<<life<<std::endl;
-
+        if(getGlobalBounds().contains(bullet->getPosition())){
+            life -= damage;
+            bullet->dead = true;
+        }
     }
 
+}
+
+int Player::get_life()
+{
+    return life;
+}
+
+int Player::get_score()
+{
+    return score;
 }
 
 void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> > &things)
@@ -216,6 +227,7 @@ void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> 
             platform = dynamic_cast<Platform *>(things[index].get());
         }while (platform == nullptr);
         setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y + platform->get_size().y + sprite_size.y + hight));
+        score += 1;
     }
 }
 

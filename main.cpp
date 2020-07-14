@@ -8,6 +8,7 @@
 #include  "platform.h"
 #include "background.h"
 #include "bullet.h"
+#include "text.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ using namespace std;
 int main()
 {
     string platform_texture = "moon.png";
+    int goal = 3;
 
 
     //////////////////////OKNO//////////////////////
@@ -41,34 +43,46 @@ int main()
 
 
     //////////////////////INTERFACE//////////////////////
-    sf::Vector2f interface_pos = {0, -1000};
+    sf::Vector2f interface_pos = {window_size.x/2, -1000};
     int bar_offset = window_size.y*(1.0f - proportion);
     Background bar(sf::Vector2f(window_size.x, bar_offset), sf::Vector2f(100, 100), "background.png");
-    bar.setPosition(interface_pos);
     bar.setOrigin(window_size.x/2, bar_offset/2);
-    //bar.setFillColor(sf::Color::Green);
+    bar.setPosition(interface_pos);
+
     std::unique_ptr<sf::View>  view_inter = std::make_unique<sf::View>(); //interface
     view_inter->setViewport(sf::FloatRect(0, proportion, 1.0f, 1.0f - proportion));
-    view_inter->setSize(sf::Vector2f(window_size.x, window_size.y*0.1));
+    view_inter->setSize(sf::Vector2f(window_size.x, window_size.y*(1.0f - proportion)));
     view_inter->setCenter(bar.getPosition());
     views.emplace_back(move(view_inter));
 
-    //////////////////////TLO//////////////////////
-    std::unique_ptr<Background> background = std::make_unique<Background>(window_size, sf::Vector2f(700, 700), "background.png");
-    background->repeate(2, 1);
-    //    background.setFillColor(sf::Color::Red);
-    //    sf::RectangleShape back(window_size);
-    //    back.setFillColor(sf::Color::Green);
+    Text life1(sf::Vector2f(window_size.x/2 - 500, -1050), 60);
+    life1.setFillColor(sf::Color::Red);
+
+    Text life2(sf::Vector2f(window_size.x/2 + 500, -1050), 60);
+    life2.setFillColor(sf::Color::Red);
+
+    Text score(sf::Vector2f(window_size.x/2, -1050), 60);
+    score.setFillColor(sf::Color::Red);
+
+
+
+
+//    //////////////////////TLO//////////////////////
+//    std::unique_ptr<Background> background = std::make_unique<Background>(window_size, sf::Vector2f(700, 700), "background.png");
+//    background->repeate(2, 1);
+//    background.setFillColor(sf::Color::Red);
+//    sf::RectangleShape back(window_size);
+//    back.setFillColor(sf::Color::Green);
 
     //////////////////////PLATFORMY//////////////////////
     std::vector<std::unique_ptr<sf::Drawable>> things;
-    int ground_overlap = 200;
+    int ground_overlap = 400;
     std::unique_ptr<Platform> base = std::make_unique<Platform>(-ground_overlap, window.getSize().y, sf::Vector2f(window.getSize().x + 2*ground_overlap, ground_overlap), sf::Vector2f(100, 100), platform_texture);
-    base->repeate(30, 3);
+    base->repeate(15, 3);
     things.emplace_back(move(base));
 
     Platform::platform_maker(sf::Vector2f(3, 5), sf::Vector2f(200, 30), window_size,
-                             sf::Vector2f(100, 100), platform_texture, sf::Vector2f(3, 1), things);
+                             sf::Vector2f(100, 100), platform_texture, sf::Vector2f(1, 0.2), things);
 
 
 
@@ -76,7 +90,7 @@ int main()
 
     sf::Clock clk;
 
-    while(window.isOpen()){
+    while(window.isOpen() && players[1]->get_score() < goal && players[0]->get_score() < goal){
         sf::Event event;
         while(window.pollEvent(event)){
             if(event.type == sf::Event::Closed){
@@ -126,7 +140,13 @@ int main()
 
         sf::View interface = *views[views.size()-1];
         window.setView(interface);
-        window.draw(bar);
+
+        life1.setString(std::to_string(players[0]->get_life()));
+        window.draw(life1);
+        life2.setString(std::to_string(players[1]->get_life()));
+        window.draw(life2);
+        score.setString(std::to_string(players[1]->get_score()) + ':' + std::to_string(players[0]->get_score()));
+        window.draw(score);
 
         window.display();
     }
