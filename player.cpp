@@ -212,9 +212,36 @@ int Player::get_life()
     return life;
 }
 
+int Player::get_fire_rate()
+{
+    return fire_rate;
+}
+
+sf::Vector2f Player::get_speed()
+{
+    sf::Vector2f speed = {move_speed_, jump_speed_};
+    return speed;
+}
+
 int Player::get_score()
 {
     return score;
+}
+
+void Player::set_life(int life)
+{
+    this->life = life;
+}
+
+void Player::set_fire_rate(int fire_rate)
+{
+    this->fire_rate = fire_rate;
+}
+
+void Player::set_speed(float move, float jump)
+{
+    move_speed_ = move;
+    jump_speed_ = jump;
 }
 
 void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> > &things)

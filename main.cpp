@@ -8,6 +8,7 @@
 #include  "platform.h"
 #include "background.h"
 #include "bullet.h"
+#include "bonus.h"
 #include "text.h"
 
 using namespace std;
@@ -89,6 +90,8 @@ int main()
 
 
     sf::Clock clk;
+    sf::Clock bonus_clk;
+
 
     while(window.isOpen() && players[1]->get_score() < goal && players[0]->get_score() < goal){
         sf::Event event;
@@ -98,7 +101,8 @@ int main()
                 break;
             }
         }
-
+        sf::Time bonus_time = bonus_clk.getElapsedTime();
+        Bonus::bonus_generator(bonus_time, bonus_clk, things);
         window.clear(sf::Color::Black);
 //        window.draw(*background);
         sf::Time time = clk.restart();
@@ -132,7 +136,19 @@ int main()
 
             for(size_t i=0; i<things.size(); i++){
                 Platform *platform = dynamic_cast<Platform *>(things[i].get());
-                if (platform != nullptr)window.draw(*platform);
+                if (platform != nullptr)
+                    window.draw(*platform);
+                Bonus *bonus = dynamic_cast<Bonus *>(things[i].get());
+                if (bonus != nullptr){
+                    window.draw(*bonus);
+                    for (auto &player:players){
+                        if(bonus->touch(player)){
+                            bonus->send(player);
+                            player->active_bonus = true;
+                            things.erase(things.begin()+i);
+                        }
+                    }
+                }
             }
 
 

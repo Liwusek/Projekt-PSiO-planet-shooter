@@ -10,6 +10,12 @@ enum class input{
     keybord_mouse,
     gamepad
 };
+enum class Type{
+    aid,
+    gun,
+    speed
+};
+
 
 class Player : public sf::Sprite
 {
@@ -29,9 +35,17 @@ public:
     std::vector<std::unique_ptr<Bullet>> bullets;
     void hit(const std::unique_ptr<Player> &player);
     int get_life();
+    int get_fire_rate();
+    sf::Vector2f get_speed();
     int get_score();
+    void set_life(int life);
+    void set_fire_rate(int fire_rate);
+    void set_speed(float move, float jump);
     void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    bool active_bonus = false;
+    Type bonus_type;
 private:
+
     void image_select(float x, float y, bool is_right = true);
     sf::Vector2f shooting_dir();
     int life = 0;
