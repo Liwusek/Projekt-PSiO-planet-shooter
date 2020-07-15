@@ -13,9 +13,9 @@ Bonus::Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things):sf::Sprite()
     setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y - size_ - hight));
 }
 
-void Bonus::bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things)
+void Bonus::bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things, int bonus_pause)
 {
-    if(time.asSeconds()>5){
+    if(time.asSeconds()>bonus_pause){
         std::unique_ptr<Bonus> bonus = std::make_unique<Bonus>(things);
         bonus->type_ = bonus->type(bonus->random());
         things.emplace_back(std::move(bonus));

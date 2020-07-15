@@ -39,8 +39,8 @@ bool Bullet::is_dead(sf::Vector2f window_size, const std::vector<std::unique_ptr
             }
 
             if((getPosition().x>window_size.x+400)
-                    ||(getPosition().x<0)
-                    ||(getPosition().y>window_size.y+400)
+                    ||(getPosition().x<-400)
+                    ||(getPosition().y>window_size.y)
                     ||(getPosition().y<-800)){
                 return true;
             }

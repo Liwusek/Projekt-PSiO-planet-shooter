@@ -20,7 +20,7 @@ public:
 
 private:
     int size_ = 5;
-    int speed_ = 300;
+    int speed_ = 500;
     sf::Vector2f dir;
 };
 

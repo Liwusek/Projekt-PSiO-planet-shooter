@@ -46,7 +46,7 @@ int main()
     //////////////////////INTERFACE//////////////////////
     sf::Vector2f interface_pos = {window_size.x/2, -1000};
     int bar_offset = window_size.y*(1.0f - proportion);
-    Background bar(sf::Vector2f(window_size.x, bar_offset), sf::Vector2f(100, 100), "background.png");
+    Background bar(sf::Vector2f(window_size.x, bar_offset), sf::Vector2f(40, 20), "interface.png");
     bar.setOrigin(window_size.x/2, bar_offset/2);
     bar.setPosition(interface_pos);
 
@@ -91,6 +91,7 @@ int main()
 
     sf::Clock clk;
     sf::Clock bonus_clk;
+    int bonus_interval = 10;
 
 
     while(window.isOpen() && players[1]->get_score() < goal && players[0]->get_score() < goal){
@@ -102,23 +103,24 @@ int main()
             }
         }
         sf::Time bonus_time = bonus_clk.getElapsedTime();
-        Bonus::bonus_generator(bonus_time, bonus_clk, things);
-        window.clear(sf::Color::Black);
+        Bonus::bonus_generator(bonus_time, bonus_clk, things, bonus_interval);
+        window.clear(sf::Color(0, 77, 153));
 //        window.draw(*background);
         sf::Time time = clk.restart();
         for (size_t i = 0; i < players.size(); ++i){
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
             for (auto const &player:players)
-            window.draw(*player);
+                window.draw(*player);
             bool on_platform = players[i]->gravity(4, things);
+            players[i]->jetpack(on_platform);
             players[i]->animation(on_platform);
             players[i]->control(on_platform);
             players[i]->collision(things);
             players[i]->movement();
             players[i]->teleport();
             players[i]->shooting();
-            players[i]->jetpack(on_platform);
+
             players[i]->bulets_remove();
             players[i]->respawn(10, things);
             players[i]->bonus();
@@ -156,8 +158,9 @@ int main()
 
 
         }
-        std::cout<<players[1]->bonus_clock.getElapsedTime().asSeconds()<<std::endl;
+
         sf::View interface = *views[views.size()-1];
+        window.draw(bar);
         window.setView(interface);
 
         life1.setString(std::to_string(players[0]->get_life()));

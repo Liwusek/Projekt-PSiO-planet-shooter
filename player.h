@@ -47,7 +47,9 @@ public:
     sf::Clock bonus_clock;
     void bonus();
     void hight_limit();
+    bool jetpack_ = false;
 private:
+
     int bonus_duration = 10;
     void image_select(float x, float y, bool is_right = true);
     sf::Vector2f shooting_dir();
@@ -62,7 +64,7 @@ private:
     Bullet bullet_;
     int score = -1;
     int damage = 10;
-    float fire_rate = 10;
+    float fire_rate = 5;
     float fire_rate_old;
     float move_speed_ = 200;
     float jump_speed_ = 200;

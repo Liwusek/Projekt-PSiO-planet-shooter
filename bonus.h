@@ -10,7 +10,7 @@ class Bonus : public sf::Sprite
 {
 public:
     Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things);
-    static void bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things);
+    static void bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things, int bonus_pause);
     Type random();
     Type type(Type type);
     bool touch(std::unique_ptr<Player> &player);

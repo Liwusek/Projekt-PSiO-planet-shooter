@@ -41,8 +41,8 @@ void Player::control(bool on_platform)
         if(sf::Joystick::isButtonPressed(joy_nr, 0))
             if(velocity.y == 0 && on_platform)velocity.y = -jump_speed_;
 
-        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) == 100)velocity.x = move_speed_;
-        else if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) == -100)velocity.x = -move_speed_;
+        if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) >80 && sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) < 120)velocity.x = move_speed_;
+        else if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) > -120 && sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::X) < -80)velocity.x = -move_speed_;
         else velocity.x = 0;
 
     }
@@ -51,8 +51,11 @@ void Player::control(bool on_platform)
 void Player::jetpack(bool on_platform)
 {
     if(input_ == input::gamepad){
-        if(sf::Joystick::isButtonPressed(joy_nr, 4) && (on_platform == false))
+        if(sf::Joystick::isButtonPressed(joy_nr, 4) && (on_platform == false)){
             velocity.y = -jump_speed_;
+            jetpack_ = true;
+        }
+        else jetpack_ = false;
     }
 }
 
@@ -98,28 +101,36 @@ void Player::collision(const std::vector<std::unique_ptr<sf::Drawable>> &vector)
 void Player::animation(bool on_platform)
 {
 
+
     if(velocity.x == 0 && on_platform){ //stanie
         image_select(0, 0);
     }
     else if(velocity.x > 0 && on_platform){ //chodzenie w prawo
-        image_select(5, 0);
+        image_select(1, 1);
     }
     else if(velocity.x < 0 && on_platform){ //chodzenie w lewo
-        image_select(5, 0, false);
+        image_select(1, 1, false);
+    }
+    else if((velocity.x >= 0) && (jetpack_ == true)){ //jetpack w prawo i w miejscu
+        image_select(3, 3);
+    }
+    else if(velocity.x < 0 && jetpack_ == true){ //jetpack w lewo
+        image_select(3, 3, false);
+    }
+    else if(velocity.x >= 0 && velocity.y > 0 && jetpack_ == false){ //skok w prawo i w miejscu
+        image_select(2, 3);
     }
 
-    else if(velocity.x >= 0 && velocity.y > 0){ //skok w prawo i w miejscu
-        image_select(6, 0);
+    else if(velocity.x < 0 && velocity.y > 0 && jetpack_ == false){ //skok w lewo
+        image_select(2, 3, false);
     }
-    else if(velocity.x < 0 && velocity.y > 0){ //skok w lewo
-        image_select(6, 0, false);
-    }
+
 
     else if(velocity.x >= 0 && velocity.y < 0){ //spadanie w prawo i w miejscu
-        image_select(7, 0);
+        image_select(1, 3);
     }
     else if(velocity.x < 0 && velocity.y < 0){ //spadanie w lewo
-        image_select(7, 0, false);
+        image_select(1, 3, false);
     }
     setTextureRect(rect);
 }
@@ -266,18 +277,18 @@ void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> 
 void Player::bonus()
 {
     if((bonus_type == Type::gun) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
-        this->fire_rate = 50;
-        std::cout<<"XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD";
+        fire_rate = 20;
     }
-    if((bonus_type == Type::aid) && active_bonus){
+    else if((bonus_type == Type::aid) && active_bonus){
         life = 100;
         active_bonus = false;
     }
 
 
-    if((bonus_type == Type::speed) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
-        move_speed_ = 500;
-        jump_speed_ = 500;
+    else if((bonus_type == Type::speed) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
+
+        move_speed_ = 400;
+        jump_speed_ = 400;
     }
     else{
         bonus_clock.restart();
