@@ -6,7 +6,7 @@
 #include <SFML/Window.hpp>
 #include <memory>
 
-class Bonus : public sf::RectangleShape
+class Bonus : public sf::Sprite
 {
 public:
     Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things);
@@ -20,8 +20,8 @@ public:
 //    void speed(Player &player);
 private:
     Type type_;
-    int size_ = 10;
-    int hight = 5;
+    int size_ = 50;
+    int hight = 10;
     sf::Texture texture_;
     sf::Vector2f speed_;
     int aid_;

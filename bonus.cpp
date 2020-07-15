@@ -2,21 +2,20 @@
 #include <iostream>
 
 
-Bonus::Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things):sf::RectangleShape()
+Bonus::Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things):sf::Sprite()
 {
     Platform *platform;
     do{
         int index = rand() % things.size();
         platform = dynamic_cast<Platform *>(things[index].get());
     }while (platform == nullptr);
-    setSize(sf::Vector2f(size_,size_));
+    //setSize(sf::Vector2f(size_,size_));
     setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y - size_ - hight));
 }
 
 void Bonus::bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things)
 {
-    std::cout<<time.asSeconds()<<std::endl;
-    if(time.asSeconds()>10){
+    if(time.asSeconds()>5){
         std::unique_ptr<Bonus> bonus = std::make_unique<Bonus>(things);
         bonus->type_ = bonus->type(bonus->random());
         things.emplace_back(std::move(bonus));
@@ -49,17 +48,17 @@ Type Bonus::type(Type type)
 {
     if(type == Type::aid){
         texture_.loadFromFile("aid.png");
-        setTexture(&texture_);
+        setTexture(texture_);
         return Type::aid;
     }
     if(type == Type::gun){
         texture_.loadFromFile("gun.png");
-        setTexture(&texture_);
+        setTexture(texture_);
         return Type::gun;
     }
     if(type == Type::speed){
         texture_.loadFromFile("speed.png");
-        setTexture(&texture_);
+        setTexture(texture_);
         return Type::speed;
     }
     return Type::aid;

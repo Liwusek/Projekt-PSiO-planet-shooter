@@ -121,6 +121,9 @@ int main()
             players[i]->jetpack(on_platform);
             players[i]->bulets_remove();
             players[i]->respawn(10, things);
+            players[i]->bonus();
+            players[i]->hight_limit();
+
 
             for (auto const &player:players){
                 for (auto const &bullet:player->bullets){
@@ -153,7 +156,7 @@ int main()
 
 
         }
-
+        std::cout<<players[1]->bonus_clock.getElapsedTime().asSeconds()<<std::endl;
         sf::View interface = *views[views.size()-1];
         window.setView(interface);
 

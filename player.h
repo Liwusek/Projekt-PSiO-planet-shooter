@@ -44,8 +44,11 @@ public:
     void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
     bool active_bonus = false;
     Type bonus_type;
+    sf::Clock bonus_clock;
+    void bonus();
+    void hight_limit();
 private:
-
+    int bonus_duration = 10;
     void image_select(float x, float y, bool is_right = true);
     sf::Vector2f shooting_dir();
     int life = 0;
@@ -60,8 +63,11 @@ private:
     int score = -1;
     int damage = 10;
     float fire_rate = 10;
+    float fire_rate_old;
     float move_speed_ = 200;
     float jump_speed_ = 200;
+    float move_speed_old;
+    float jump_speed_old;
     sf::Vector2f velocity = {0, 0};
     sf::Vector2f window_size;
 };

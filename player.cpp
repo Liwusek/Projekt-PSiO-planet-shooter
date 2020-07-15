@@ -20,6 +20,11 @@ Player::Player(sf::RenderWindow &window, std::string texture_name, input input, 
 
     sprite_size = sf::Vector2f(rect.width, rect.height);
     setOrigin(sprite_size.x/2, sprite_size.y/2);
+
+
+    fire_rate_old = fire_rate;
+    move_speed_old = move_speed_;
+    jump_speed_old = jump_speed_ ;
 }
 
 void Player::control(bool on_platform)
@@ -256,6 +261,38 @@ void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> 
         setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y + platform->get_size().y + sprite_size.y + hight));
         score += 1;
     }
+}
+
+void Player::bonus()
+{
+    if((bonus_type == Type::gun) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
+        this->fire_rate = 50;
+        std::cout<<"XDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD";
+    }
+    if((bonus_type == Type::aid) && active_bonus){
+        life = 100;
+        active_bonus = false;
+    }
+
+
+    if((bonus_type == Type::speed) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
+        move_speed_ = 500;
+        jump_speed_ = 500;
+    }
+    else{
+        bonus_clock.restart();
+        fire_rate = fire_rate_old;
+        move_speed_ = move_speed_old;
+        jump_speed_ = jump_speed_old;
+        active_bonus = false;
+    }
+
+}
+
+void Player::hight_limit()
+{
+    if(getPosition().y<-400)
+        life -= 1;
 }
 
 void Player::shooting()
