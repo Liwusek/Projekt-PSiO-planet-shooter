@@ -24,44 +24,42 @@ public:
     sf::Texture texture;
     void control(bool on_platform);
     void jetpack(bool on_platform);
-    bool gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    void hit(const std::unique_ptr<Player> &player);
     void collision(const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
     void animation(bool on_platform);
     void teleport();
     void movement();
     void shooting();
-    bool bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector);
     void bulets_remove();
-    std::vector<std::unique_ptr<Bullet>> bullets;
-    void hit(const std::unique_ptr<Player> &player);
-    int get_life();
-    int get_fire_rate();
-    sf::Vector2f get_speed();
-    int get_score();
-    void set_life(int life);
-    void set_fire_rate(int fire_rate);
-    void set_speed(float move, float jump);
     void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
-    bool active_bonus = false;
-    Type bonus_type;
-    sf::Clock bonus_clock;
     void bonus();
     void hight_limit();
-    bool jetpack_ = false;
+    int get_life();
+    int get_score();
+    bool gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    bool active_bonus = false;
+    Type bonus_type;
+    std::vector<std::unique_ptr<Bullet>> bullets;
+
 private:
 
-    int bonus_duration = 10;
+
     void image_select(float x, float y, bool is_right = true);
     sf::Vector2f shooting_dir();
-    int life = 0;
+    sf::Vector2f velocity = {0, 0};
+    sf::Vector2f window_size;
     sf::Vector2f sprite_size;
     sf::Vector2f image_count;
     sf::IntRect rect;
     sf::Clock clock;
     sf::Clock clock2;
+    sf::Clock bonus_clock;
+
     input input_;
-    unsigned int joy_nr;
     Bullet bullet_;
+    unsigned int joy_nr;
+    int bonus_duration = 10;
+    int life = 0;
     int score = -1;
     int damage = 10;
     float fire_rate = 5;
@@ -70,8 +68,8 @@ private:
     float jump_speed_ = 200;
     float move_speed_old;
     float jump_speed_old;
-    sf::Vector2f velocity = {0, 0};
-    sf::Vector2f window_size;
+
+    bool jetpack_ = false;
 };
 
 #endif // PLAYER_H

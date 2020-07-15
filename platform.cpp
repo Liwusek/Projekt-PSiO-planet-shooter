@@ -39,13 +39,13 @@ sf::Vector2f texture_size, std::string texture_name, sf::Vector2f texture_multi,
                     if (platform != nullptr){
                         if(platform->getGlobalBounds().intersects(new_platform->getGlobalBounds())){
                             are_colliding = true;
-                            std::cout<<"Wrong position, relocating"<<std::endl;
+//                            std::cout<<"Wrong position, relocating"<<std::endl;
                         }
                     }
                 }
 
             }while(are_colliding);
-            std::cout<<"Succes"<<std::endl;
+//            std::cout<<"Succes"<<std::endl;
             vector.emplace_back(std::move(new_platform));
         }
             screen.y -= space;

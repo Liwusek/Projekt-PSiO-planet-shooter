@@ -47,6 +47,7 @@ int main()
     sf::Vector2f interface_pos = {window_size.x/2, -1000};
     int bar_offset = window_size.y*(1.0f - proportion);
     Background bar(sf::Vector2f(window_size.x, bar_offset), sf::Vector2f(40, 20), "interface.png");
+    bar.repeate(1, 1);
     bar.setOrigin(window_size.x/2, bar_offset/2);
     bar.setPosition(interface_pos);
 
@@ -57,23 +58,13 @@ int main()
     views.emplace_back(move(view_inter));
 
     Text life1(sf::Vector2f(window_size.x/2 - 500, -1050), 60);
-    life1.setFillColor(sf::Color::Red);
 
     Text life2(sf::Vector2f(window_size.x/2 + 500, -1050), 60);
-    life2.setFillColor(sf::Color::Red);
 
     Text score(sf::Vector2f(window_size.x/2, -1050), 60);
-    score.setFillColor(sf::Color::Red);
+    score.setFillColor(sf::Color::White);
 
 
-
-
-//    //////////////////////TLO//////////////////////
-//    std::unique_ptr<Background> background = std::make_unique<Background>(window_size, sf::Vector2f(700, 700), "background.png");
-//    background->repeate(2, 1);
-//    background.setFillColor(sf::Color::Red);
-//    sf::RectangleShape back(window_size);
-//    back.setFillColor(sf::Color::Green);
 
     //////////////////////PLATFORMY//////////////////////
     std::vector<std::unique_ptr<sf::Drawable>> things;
@@ -104,14 +95,17 @@ int main()
         }
         sf::Time bonus_time = bonus_clk.getElapsedTime();
         Bonus::bonus_generator(bonus_time, bonus_clk, things, bonus_interval);
-        window.clear(sf::Color(0, 77, 153));
-//        window.draw(*background);
+        window.clear(sf::Color(13, 71, 161));
+
         sf::Time time = clk.restart();
         for (size_t i = 0; i < players.size(); ++i){
+
             views[i]->setCenter(sf::Vector2f(players[i]->getPosition()));
             window.setView(*views[i]);
+
             for (auto const &player:players)
                 window.draw(*player);
+
             bool on_platform = players[i]->gravity(4, things);
             players[i]->jetpack(on_platform);
             players[i]->animation(on_platform);
@@ -120,9 +114,8 @@ int main()
             players[i]->movement();
             players[i]->teleport();
             players[i]->shooting();
-
             players[i]->bulets_remove();
-            players[i]->respawn(10, things);
+            players[i]->respawn(20, things);
             players[i]->bonus();
             players[i]->hight_limit();
 
@@ -140,12 +133,9 @@ int main()
 
 
             for(size_t i=0; i<things.size(); i++){
-                Platform *platform = dynamic_cast<Platform *>(things[i].get());
-                if (platform != nullptr)
-                    window.draw(*platform);
+                window.draw(*things[i]);
                 Bonus *bonus = dynamic_cast<Bonus *>(things[i].get());
                 if (bonus != nullptr){
-                    window.draw(*bonus);
                     for (auto &player:players){
                         if(bonus->touch(player)){
                             bonus->send(player);
@@ -160,17 +150,30 @@ int main()
         }
 
         sf::View interface = *views[views.size()-1];
-        window.draw(bar);
-        window.setView(interface);
 
+        window.setView(interface);
+        window.draw(bar);
+
+        if(players[0]->get_life()<=30)
+            life1.setFillColor(sf::Color::Red);
+        else life1.setFillColor(sf::Color::White);
         life1.setString(std::to_string(players[0]->get_life()));
         window.draw(life1);
+
+        if(players[1]->get_life()<=30)
+            life2.setFillColor(sf::Color::Red);
+        else life2.setFillColor(sf::Color::White);
         life2.setString(std::to_string(players[1]->get_life()));
         window.draw(life2);
+
         score.setString(std::to_string(players[1]->get_score()) + ':' + std::to_string(players[0]->get_score()));
         window.draw(score);
 
         window.display();
     }
+    if(players[0]->get_score()>players[1]->get_score())
+        std::cout<<"Wygrywa gracz 2. wynikiem "<<goal<<" do "<<players[1]->get_score()<<std::endl;
+    else std::cout<<"Wygrywa gracz 1. wynikiem "<<goal<<" do "<<players[0]->get_score()<<std::endl;
+
     return 0;
 }

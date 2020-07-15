@@ -6,7 +6,7 @@
 #include <memory>
 
 Player::Player(sf::RenderWindow &window, std::string texture_name, input input, unsigned int joy):sf::Sprite(),
-    image_count({8, 5}), input_(input), joy_nr(joy), window_size(window.getSize())
+      window_size(window.getSize()), image_count({8, 5}), input_(input), joy_nr(joy)
 {
     texture.loadFromFile(texture_name);
     texture.setSmooth(true);
@@ -157,8 +157,6 @@ void Player::teleport()
 {
     if(getPosition().x>window_size.x)setPosition(0, getPosition().y);
     else if(getPosition().x<0)setPosition(window_size.x, getPosition().y);
-//    else if(getPosition().y>window_size.y)setPosition(getPosition().x, 0);
-//    else if(getPosition().y<0)setPosition(getPosition().x, window_size.y);
 }
 
 void Player::movement()
@@ -177,34 +175,6 @@ sf::Vector2f Player::shooting_dir()
     dir_end.x = dir_norm.x*bullet_.getSpeed();
     dir_end.y = dir_norm.y*bullet_.getSpeed();
     return dir_end;
-}
-
-bool Player::bullets_delete(const std::vector<std::unique_ptr<sf::Drawable>> &vector)
-{
-    for(auto &bullet : bullets){
-        for (auto it = bullets.begin(); it != bullets.end(); it++){
-            for(size_t i=0; i<vector.size(); i++){
-                Platform *platform = dynamic_cast<Platform *>(vector[i].get());
-                if (platform != nullptr){
-                    if(platform->getGlobalBounds().contains(bullet->getPosition())){
-                        bullets.erase(it);
-                        return true;
-                    }
-                }
-            }
-
-            if((bullet->getPosition().x>window_size.x)
-                    ||(bullet->getPosition().x<0)
-                    ||(bullet->getPosition().y>window_size.y)
-                    ||(bullet->getPosition().y<0)){
-                bullets.erase(it);
-                return true;
-            }
-
-
-        }
-    }
-    return false;
 }
 
 void Player::bulets_remove()
@@ -228,37 +198,11 @@ int Player::get_life()
     return life;
 }
 
-int Player::get_fire_rate()
-{
-    return fire_rate;
-}
-
-sf::Vector2f Player::get_speed()
-{
-    sf::Vector2f speed = {move_speed_, jump_speed_};
-    return speed;
-}
-
 int Player::get_score()
 {
     return score;
 }
 
-void Player::set_life(int life)
-{
-    this->life = life;
-}
-
-void Player::set_fire_rate(int fire_rate)
-{
-    this->fire_rate = fire_rate;
-}
-
-void Player::set_speed(float move, float jump)
-{
-    move_speed_ = move;
-    jump_speed_ = jump;
-}
 
 void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> > &things)
 {
@@ -269,7 +213,7 @@ void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> 
             int index = rand() % things.size();
             platform = dynamic_cast<Platform *>(things[index].get());
         }while (platform == nullptr);
-        setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y + platform->get_size().y + sprite_size.y + hight));
+        setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y + platform->get_size().y - sprite_size.y - hight));
         score += 1;
     }
 }
@@ -277,10 +221,10 @@ void Player::respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable> 
 void Player::bonus()
 {
     if((bonus_type == Type::gun) && active_bonus && bonus_clock.getElapsedTime().asSeconds()<bonus_duration){
-        fire_rate = 20;
+        fire_rate = 15;
     }
     else if((bonus_type == Type::aid) && active_bonus){
-        life = 100;
+        if(life<=80)life += 20;
         active_bonus = false;
     }
 
@@ -310,13 +254,11 @@ void Player::shooting()
 {
     if(input_ == input::gamepad){
         std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
-//        Bullet *bullet = new Bullet();
         float time = clock2.getElapsedTime().asSeconds();
         if(sf::Joystick::getAxisPosition(joy_nr, sf::Joystick::Axis::Z)<-50 && time > 1/fire_rate){
             bullet->setPosition(getPosition());
             bullet->setDir(shooting_dir());
             bullets.emplace_back(std::move(bullet));
-//            bullets.emplace_back(bullet);
             clock2.restart();
 
         }

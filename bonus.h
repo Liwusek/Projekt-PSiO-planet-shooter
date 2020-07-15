@@ -15,9 +15,6 @@ public:
     Type type(Type type);
     bool touch(std::unique_ptr<Player> &player);
     void send(std::unique_ptr<Player> &player);
-//    void aid(Player &player);
-//    void gun(Player &player);
-//    void speed(Player &player);
 private:
     Type type_;
     int size_ = 50;

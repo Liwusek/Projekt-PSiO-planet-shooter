@@ -8,7 +8,6 @@ SOURCES += \
 	background.cpp \
 	bonus.cpp \
 	bullet.cpp \
-	functions.cpp \
 	main.cpp \
 	platform.cpp \
 	player.cpp \
@@ -25,7 +24,6 @@ HEADERS += \
 	background.h \
 	bonus.h \
 	bullet.h \
-	functions.h \
 	platform.h \
 	player.h \
 	text.h

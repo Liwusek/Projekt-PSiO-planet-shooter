@@ -1,44 +1,55 @@
-# Strzelanka multiplayerowa 2d typu splite screen dla 4 graczy SFML - "Planet Shooter"
+# Strzelanka multiplayerowa 2d typu splite screen dla 2 graczy SFML - "Planet Shooter"
 
 ## 1.Ogólne założenia:
->gra to dwuosobowa strzelanka która odbywa się na tzw, "planecie" - środowisku, które jest zapętloną mapą
+>gra to dwuosobowa strzelanka która odbywa się w środowisku, które jest zapętloną mapą
 
->do około planety są rozmieszczone różne platformy, by urozmaicić środowisko gry
+>do około mapy są rozmieszczone różne platformy, by urozmaicić środowisko gry
 
 >aby zdynamizować rozgrywkę gracze mają do dyspozycji jetpacki
 
->różne planety, a co za tym idzie inne rozłożenie platform oraz inna grawitacja (na razie dwie - jedna predefiniowana (Mars), druga losowo generowana).
+>gracz ma do użytku interface tj. ilość życia, minimalistyczna tabela wyników
 
->gracz ma do użytku interface tj. ilość życia, posiadane umiejętności, minimalistyczna tabela wyników
-
->ruch gracza charakteryzuje pewna bezwładność - stworzy to pewną trudność w poruszaniu, a tym samym urozmaici rozgrywkę
+>aby używać jetpacku gracz musi oderwać się od ziemi - stworzy to pewną trudność w poruszaniu, a tym samym urozmaici rozgrywkęaby
 
 ## 2. Wygląd:
->kamera danego gracza ma być statyczna tj. gdy porusza się po powierzchni wokół planety kamera nie przekręca się z graczem – ma to być najważniejsza mechanika rozgrywki
+>okno gry jest podzielone na 3 elementy: okno gracza 1., okno gracza 2. i interface
 
->animacje ruchu gracza – lot prawo, lewo,  góra, dół i pozycja spoczynkowa gdy stoi na planecie.
+>kamera porusza się razem z graczem - jest wycentrowana na jego postać
+
+>animacje ruchu gracza – lot prawo, lewo,  góra, dół i pozycja spoczynkowa gdy stoi na planecie, osobne textury podzcas używania jetpacka
+
+>pociski to zwykłe zielone koła
+
+>proste prostokątne platformy z nałożoną teksturą
+
+>niebieskie tło
+
+>różne bonusy dające różne moce graczom.
 
 ## 3. Działanie:
 #### Pociski, zabicia, odrodzenia, życie:
 >gracze otrzymują obrażenia za pomocą pocisków wystrzelonych przez innych graczy oraz gdy wylecą poza daną wysokość – ograniczy to pole rozgrywki
 
->pociski znikają gdy nalecą na przeszkodę - gracza, platformę, planetę
+>pociski znikają gdy nalecą na przeszkodę - gracza, platformę
 
 >gracz umiera gdy jego pasek zdrowia osiągnie 0
 
->gracze odradzają się po przeciwnej stronie planety od miejsca zgonu
+>gracze odradzają się na powierzchni losowej platformy
 
->rozgrywka kończy się po osiągnięciu danej liczby zabić
+>rozgrywka kończy się po osiągnięciu danej liczby zabić (3)
 #### Sterowanie:
 
->postać gracza 1. jest sterowana za pomocą myszki i klawiatury, gracz 2. ma do dyspozycji controller xbox-owy
+>gracze sterują swoimi postaciami za pomocą kontrolerów xbox-owych - zarówno gracz 1. jak i 2.
 
->sterowanie strzelaniem odbywa się przez wychylanie gałki - za jej pomocą gracz nadaje kierunek pociskom lub myszki - pociski kierują sie w stronę kursora
+>gracze używają lewej gałki by przesówać postać w prawo i lewo
+
+>sterowanie strzelaniem odbywa się przez wychylanie prawej gałki - za jej pomocą gracz nadaje kierunek pociskom
 
 >pojedynczy klawisz - użycie jetpaka
 
-#### Poruszanie się:
->nie ma skoku - zamiast tego gracze mają do dyspozycji jetpaki za pomocą których mogą odrywać się od powierzchni planety.
+>pojedynczy klawisz - skok - wymagane jest oderwanie się od ziemi by użyć jetpacka
+
+
 #### Platformy:
 
 >platformy są nieruchome
@@ -46,121 +57,203 @@
 >gracze mogą stawać na platformach
 
 >pociski znikają po zderzeniu z platformą
+
+>są rozmieszczane losowo na różnnych poziomach
+
 #### Przedmioty:
->przedmioty do podniesienia (na chwilę obecną): zwiększenie prędkości poruszania się oraz druga broń - karabin maszynowy o zwiększonej szybkostrzelności (domyślnie jest wolny pistolet)
+>graczę mogą podnosić rozmieszczone po mapie przedmioty
 
 >przedmioty mają określony czas działania, potem znikają
 
 >przedmioty są losowo rozmieszczone po mapie
 
+>pistolet - zwiększa szybkostrzelność gracza
+
+>apteczka dodaje 20 punktów życia, jednak nie pozwala na uleczenie gdy ma się więcej niż 80 punktów życia
+
+>błyskawica zwiększa szybkość poruszania się
+
 #### Mapa:
->pierwsza wersja będzie mieć dwie opcje map - predefiniowany Mars oraz mapę generowaną losowo. Nie tylko platformy się zmieniają, ale też siła grwitacji
+>platformy są rozmieszczane losowo
+
+>dół stanowi jedna duża platforma
+
+>mapa jest zapętlona - gracz teleportuje się z jednego końca na drugi
+
+>mapa jest ograniczona z góry - gracze tracą życie po przekroczeniu danego pułapu
 
 
 ## 4. Klasy i ich zawartość:
-#### Animation:
-Odtwarzanie animacji:
+#### Background:
+Ułatia tworznie tła i nakładania tekstur.
 
 ```c++
-class Animation
+class Background : public sf::RectangleShape
+{
+        public:
+            Background();
+            Background(sf::Vector2f size, sf::Vector2f texture_size, std::string texture_name);
+            void repeate(float x, float y = 1.0);
+        private:
+            sf::Texture texture_;
+            sf::Vector2f size_;
+            sf::Vector2f texture_size;
+        };
+
+#endif // BACKGROUND_H
+
+```
+
+#### Bonus
+Zawiera mechanizmy losujące typ bonusu oraz miejsce jego wystąpienia.
+Wszystko skupione zostaje w funkcji statycznej "bonus_generator".
+```c++
+class Bonus : public sf::Sprite
 {
 public:
-    Animation(sf::Vector2f current_image, sf::Vector2f image_count, sf::IntRect rect, float delta_time); //konstruktor
-    ~Animation();
-    sf::Vector2f update(float current_image.y, float delta_time, bool is_fliped = true) //wyświetla animacje, zwraca wielkość uzyskanego sprita
+    Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things);
+    static void bonus_generator(sf::Time &time, sf::Clock &clock, std::vector<std::unique_ptr<sf::Drawable>> &things, int bonus_pause);
+    Type random();
+    Type type(Type type);
+    bool touch(std::unique_ptr<Player> &player);
+    void send(std::unique_ptr<Player> &player);
 private:
-    sf::Vector2f current_image //przechowuje indeks obecnie używanej tekstury
-    sf::Vector2f image_count //przechwuje ilość pojedynczych tekstur pliku .png w obu osiach
-    sf::IntRect rect //służy do wycinania poszczególnych fragmentów tekstury
-    float delta_time //zmienna służąca do kontroli długości trwania animacji
-    bool is_fliped //sygnalizuje czy teksture należy obrócić wzdłuż osi y
+    Type type_;
+    int size_ = 50;
+    int hight = 10;
+    sf::Texture texture_;
+    sf::Vector2f speed_;
+    int aid_;
+    int fire_rate_;
 };
+
 ```
 
-#### Functions
-Przechowuje zmienne i funkcje przydatne dla wszystkich elementów rozgrywki:
--czas
--wielkość pola rozgrywki
--tekstury
-
+#### Bullet:
+Odpowiada za tworzenie pocisków jako elementów fizycznych rozgrywki - obiekty te są wykorzystywana w klacsie "Player".
 ```c++
-class Functions : public sf::Clock
+class Bullet : public sf::CircleShape
 {
 public:
-    virtual ~Functions() = default;
-    Functions(sf::RenderWindow &window, std::string name); //konstruktor - name to nazwa pliku z teksturą
-    virtual void getBounds(sf::RenderWindow &window); //nadpisuje this->screen_bounds wielkością wyświetlanego okna
-    virtual float getTime(); //zwraca clock.restart().asSeconds();
+    Bullet();
+    ~Bullet();
+    int getSpeed();
+    void setDir(sf::Vector2f dir);
+    sf::Vector2f getDir();
+    bool is_dead(sf::Vector2f window_size, const std::vector<std::unique_ptr<sf::Drawable>> &vector);
+    bool dead = false;
 
-protected:
-    sf::Texture texture //przechowuje tekstury
-    sf::Vector2f screen_bounds; //przechowuje wielkość wyświetlanego okna
-};
-```
-
-#### Gravity:
-
-```c++
-class Gravity
-{
-public:
-    Gravity(float  power, sf::Vector2f position);
-    apply() //uruchamia grawitacje
 private:
-    sf::Vector2f position; //punkt do którego przyciąga grawitacja
-    float power; //siła grawitacji
+    int size_ = 5;
+    int speed_ = 500;
+    sf::Vector2f dir;
 };
 ```
 
-#### Planet:
-Klasa mapy - informacje o planecie:
-
-```c++
-class Planet : public sf::CircleShape, Functions
-{
-public:
-    Planet(int radius, int spin, sf::RenderWindow &window);
-    void change_spin(float spin); //nadpisywanie this->spin
-    void spin(); //wykonywanie animacji obrotu wokół własnej osi
-private:
-    Animation animation; //służy do aniimacji tekstur
-    int radius; //promień planety
-    int height; //wysokość okraniczająca rozgrywkę
-    int spin; //prędkość obrotu planety
-    int gravity; //siła grawitacji
-};
-```
 #### Platform:
-Informacje o planecie:
+Głównym jej zadaniem jest generowanie platform za pomocą funkcji "platform_maker". Klasa przechowuje także tekstury i wielkości platform.
+
 ```c++
-class Platform : public sf::Rectangleshape, Functions
+class Platform : public sf::RectangleShape
 {
 public:
-    Planet(sf::Vector2f size, sf::Vector2f position, sf::RenderWindow &window);
-    void spin(int spin, sf::Vector2f center = screen_bounds/2); //wykonywanie animacji obrotu wokół środka planety, gdzie spin to szybkość obrotu
+    Platform();
+    Platform(int x, int y, sf::Vector2f size, sf::Vector2f texture_size, std::string texture_name);
+    void repeate(float x, float y = 1);
+    static void platform_maker(sf::Vector2f quantity, sf::Vector2f size, sf::Vector2f screen,
+    sf::Vector2f texture_size, std::string texture_name, sf::Vector2f texture_multi, std::vector<std::unique_ptr<sf::Drawable>> &vector);
+    sf::Vector2f get_size();
 private:
-    Animation animation; //animacja tekstur
-    sf::Vector2f size;  //wielkość platformy
-    sf::Vector2f position; //pozycja platformy
+    sf::Texture texture_;
+    sf::Vector2f size_;
+    sf::Vector2f texture_size;
+
 };
 ```
 #### Player:
-Informacje o postaci gracza:
+Najważniejsza klasa projektu - odpowiada za całe działanie gracza takie jak:
+- sterowanie
+- poruszanie się
+- strzelanie
+- obsługa bonusów
+- zadawnie obrażeń i utrata życia
+- przechowywanie wyników rozgrywki
+- kolizje
+- animacje
+- respawn-y
 
 ```c++
-class Player : public sf::Sprite, public Functions
+class Player : public sf::Sprite
 {
 public:
-    Player(sf::RenderWindow &window);
-    Player();
-    void collision(const std::vector<std::unique_ptr<sf::Drawable>> &things); //wykrywa kolizje z obiektmi
-    void control(bool is_midair); //sterowanie postacią gracza
+    Player(sf::RenderWindow &window, std::string texture_name, input, unsigned int joy=0);
+    sf::Texture texture;
+    void control(bool on_platform);
+    void jetpack(bool on_platform);
+    void hit(const std::unique_ptr<Player> &player);
+    void collision(const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    void animation(bool on_platform);
+    void teleport();
+    void movement();
+    void shooting();
+    void bulets_remove();
+    void respawn(int hight, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    void bonus();
+    void hight_limit();
+    int get_life();
+    int get_score();
+    bool gravity(float a, const std::vector<std::unique_ptr<sf::Drawable>> &platforms);
+    bool active_bonus = false;
+    Type bonus_type;
+    std::vector<std::unique_ptr<Bullet>> bullets;
+
 private:
-    Animation animation //animacja tekstur
-    Gravity gravity; //grawitacja
-    bool is_midair; //zmienna mówiąca czy gracz znajduje się w powietrzu
-    sf::Vector2f speed = {100, 100}; //speed.x prędkość gracza, speed.y wysokość skoku
-    sf::Vector2f size //wielkość sprita
+
+
+    void image_select(float x, float y, bool is_right = true);
+    sf::Vector2f shooting_dir();
+    sf::Vector2f velocity = {0, 0};
+    sf::Vector2f window_size;
+    sf::Vector2f sprite_size;
+    sf::Vector2f image_count;
+    sf::IntRect rect;
+    sf::Clock clock;
+    sf::Clock clock2;
+    sf::Clock bonus_clock;
+
+    input input_;
+    Bullet bullet_;
+    unsigned int joy_nr;
+    int bonus_duration = 10;
+    int life = 0;
+    int score = -1;
+    int damage = 10;
+    float fire_rate = 5;
+    float fire_rate_old;
+    float move_speed_ = 200;
+    float jump_speed_ = 200;
+    float move_speed_old;
+    float jump_speed_old;
+
+    bool jetpack_ = false;
+};
+
+#endif // PLAYER_H
+
+```
+#### Text:
+Odpowiedzialna za wyświetlanie tekstu.
+
+```c++
+class Text : public sf::Text
+{
+public:
+    Text();
+    Text(sf::Vector2f position, int size_);
+private:
+    int size_;
+    sf::Font font;
+
 };
 ```
 

@@ -9,7 +9,6 @@ Bonus::Bonus(std::vector<std::unique_ptr<sf::Drawable>> &things):sf::Sprite()
         int index = rand() % things.size();
         platform = dynamic_cast<Platform *>(things[index].get());
     }while (platform == nullptr);
-    //setSize(sf::Vector2f(size_,size_));
     setPosition(sf::Vector2f(platform->getPosition().x + platform->get_size().x/2, platform->getPosition().y - size_ - hight));
 }
 
