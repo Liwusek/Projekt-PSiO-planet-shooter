@@ -73,6 +73,10 @@
 
 >błyskawica zwiększa szybkość poruszania się
 
+![bonus szybkości](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter_speed.png)
+![bonus szybkostrzelności](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter_gun.png)
+![apteczka](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter_aid.png)
+
 #### Mapa:
 >platformy są rozmieszczane losowo
 
@@ -258,11 +262,6 @@ private:
 ```
 
 
-
-
-
-
-
-![Map](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter1.png)
-![One player](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter3.png)
-![Full game](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter2.png)
+![Rozgrywka](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter1_new.png)
+![Rozgrywka](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter3_new.png)
+![Rozgrywka](https://github.com/Liwusek/Projekt-PSiO-planet-shooter/blob/master/images/planet_shooter2_new.png)
